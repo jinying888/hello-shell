@@ -2,6 +2,7 @@
 
 date
 who
+he=`who`
 testing=`date`
-echo "the date and time are:".$testing
+echo $he." the date and time are:".$testing
 
