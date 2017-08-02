@@ -1,0 +1,43 @@
+#!/usr/bin/expect
+
+set timeout 20
+
+set passwderror 0
+
+if { [llength $argv] < 1} {
+    puts "Usage:"
+    puts "$argv0 username"
+    exit 1
+}
+
+set user_name [lindex $argv 0]
+set passwd "yourvpnp4wd"
+spawn /usr/local/sbin/openvpn --config /usr/local/etc/openvpn/yourIDC.ovpn
+  
+expect {  
+    "*assword:*" {  
+        if { $passwderror == 1 } {  
+        puts "passwd is error"  
+        exit 2  
+        }  
+        set timeout 1000  
+        set passwderror 1  
+        send "$passwd\r"  
+        exp_continue  
+    }  
+    "*es/no)?*" {  
+        send "yes\r"  
+        exp_continue  
+    }  
+    timeout {  
+        puts "connect is timeout"  
+        exit 3  
+    } 
+
+    "*sername:" {
+        set timeout 1000
+        send "$user_name\r"
+        exp_continue
+    }
+         
+} 
